@@ -89,7 +89,7 @@ if(WIN32)
     
     # Set subsystem to Windows for main executable
     set_target_properties(AltSnap PROPERTIES
-        LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:unfuckWinMain"
+        LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:unfuckWinMain /MANIFEST:NO"
     )
     
     # Set DLL entry point
