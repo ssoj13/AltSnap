@@ -86,6 +86,11 @@ if(WIN32)
         shell32
     )
     
+    if(MSVC)
+        # Add intrinsic library for memset and other compiler intrinsics
+        target_link_libraries(AltSnap libvcruntime.lib)
+    endif()
+    
     
     # Link libraries for hooks.dll
     target_link_libraries(hooks
