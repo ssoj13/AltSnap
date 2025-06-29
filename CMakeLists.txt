@@ -15,16 +15,17 @@ if(WIN32)
         set(CMAKE_GENERATOR_PLATFORM x64)
         
         # MSVC compiler flags for optimization and Windows compatibility
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Os /GS- /Gy")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Os /GS- /Gy /Gm- /GL")
         set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE /NXCOMPAT")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE /NXCOMPAT /LTCG /NODEFAULTLIB")
         
         # Define Windows version and disable some warnings
         add_definitions(-D_WIN32_WINNT=0x0600 -DWINVER=0x0600 -DUNICODE -D_UNICODE)
         add_definitions(-D__USE_MINGW_ANSI_STDIO=0 -DAPP_NAME=L"AltSnap" -DAPP_NAMEA="AltSnap")
         
-        # Disable specific MSVC warnings
+        # Disable specific MSVC warnings and disable runtime checks
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4996 /wd4244 /wd4267 /wd4005 /wd4068 /wd4047 /wd4024 /wd4090")
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /RTC-")
     endif()
 endif()
 
@@ -69,11 +70,11 @@ add_library(hooks SHARED ${HOOKS_SOURCES})
 set_target_properties(AltSnap PROPERTIES OUTPUT_NAME "AltSnap")
 set_target_properties(hooks PROPERTIES OUTPUT_NAME "hooks")
 
-# Link libraries for AltSnap.exe
+# Link libraries for AltSnap.exe (no CRT, Windows API only)
 if(WIN32)
     target_link_libraries(AltSnap
-        user32
         kernel32
+        user32
         gdi32
         comctl32
         advapi32
