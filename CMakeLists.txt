@@ -15,16 +15,16 @@ if(WIN32)
         set(CMAKE_GENERATOR_PLATFORM x64)
         
         # MSVC compiler flags for optimization and Windows compatibility
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Os /GS- /Gy /GL")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Os /GS- /Gy")
         set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LTCG /DYNAMICBASE /NXCOMPAT")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE /NXCOMPAT")
         
         # Define Windows version and disable some warnings
-        add_definitions(-D_WIN32_WINNT=0x0501 -DWINVER=0x0501)
-        add_definitions(-D__USE_MINGW_ANSI_STDIO=0 -D_FORTIFY_SOURCE=2)
+        add_definitions(-D_WIN32_WINNT=0x0600 -DWINVER=0x0600 -DUNICODE -D_UNICODE)
+        add_definitions(-D__USE_MINGW_ANSI_STDIO=0 -DAPP_NAME=L"AltSnap" -DAPP_NAMEA="AltSnap")
         
         # Disable specific MSVC warnings
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4996 /wd4244 /wd4267")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4996 /wd4244 /wd4267 /wd4005 /wd4068 /wd4047 /wd4024 /wd4090")
     endif()
 endif()
 
@@ -34,16 +34,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # Define source files for AltSnap.exe
 set(ALTSNAP_SOURCES
     altsnap.c
-    tray.c
-    config.c
-    languages.c
 )
 
 # Define source files for hooks.dll
 set(HOOKS_SOURCES
     hooks.c
-    zones.c
-    snap.c
 )
 
 # Create resource files
@@ -94,7 +89,7 @@ if(WIN32)
     
     # Set subsystem to Windows for main executable
     set_target_properties(AltSnap PROPERTIES
-        LINK_FLAGS "/SUBSYSTEM:WINDOWS"
+        LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:unfuckWinMain"
     )
     
     # Set DLL entry point
