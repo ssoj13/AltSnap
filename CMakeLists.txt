@@ -17,15 +17,20 @@ if(WIN32)
         # MSVC compiler flags for optimization and Windows compatibility
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Os /GS- /Gy /Gm- /GL")
         set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE /NXCOMPAT /LTCG /NODEFAULTLIB")
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MT")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE /NXCOMPAT /LTCG")
         
         # Define Windows version and disable some warnings
         add_definitions(-D_WIN32_WINNT=0x0600 -DWINVER=0x0600 -DUNICODE -D_UNICODE)
         add_definitions(-D__USE_MINGW_ANSI_STDIO=0 -DAPP_NAME=L"AltSnap" -DAPP_NAMEA="AltSnap")
         
-        # Disable specific MSVC warnings and disable runtime checks
+        # Disable specific MSVC warnings and runtime checks
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4996 /wd4244 /wd4267 /wd4005 /wd4068 /wd4047 /wd4024 /wd4090")
-        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /RTC-")
+        
+        # Disable runtime checks for debug builds
+        string(REPLACE "/RTC1" "" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+        string(REPLACE "/RTCc" "" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+        string(REPLACE "/RTCs" "" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
     endif()
 endif()
 
@@ -80,6 +85,7 @@ if(WIN32)
         advapi32
         shell32
     )
+    
     
     # Link libraries for hooks.dll
     target_link_libraries(hooks
